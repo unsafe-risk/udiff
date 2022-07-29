@@ -1,6 +1,10 @@
 package udiff
 
-import "unsafe"
+import (
+	"reflect"
+	"sync"
+	"unsafe"
+)
 
 type opType uint16
 
@@ -20,4 +24,18 @@ func setValue[T any](o *op, v *T) {
 type instruction struct {
 	rtype uintptr
 	code  []op
+}
+
+var buildTable sync.Map
+
+func build(t reflect.Type) *instruction {
+	if v, ok := buildTable.Load(t); ok {
+		return v.(*instruction)
+	}
+	inst := &instruction{}
+	buildTable.Store(t, inst) // Early Store to prevent recursive calls
+	switch t.Kind() {
+
+	}
+	return nil
 }
